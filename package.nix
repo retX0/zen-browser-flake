@@ -7,7 +7,7 @@
   config,
   wrapGAppsHook3,
   autoPatchelfHook,
-  ffmpeg,
+  ffmpeg_7,
   alsa-lib,
   curl,
   dbus-glib,
@@ -70,12 +70,6 @@
     # Install policies.json for macOS
     mkdir -p "$out/Applications/${applicationName}.app/Contents/Resources/distribution"
     ln -s ${policiesJson} "$out/Applications/${applicationName}.app/Contents/Resources/distribution/policies.json"
-
-    # Re-sign with correct identifier to maintain AdGuard compatibility
-    # AdGuard uses code signing identifier (not CFBundleIdentifier) to recognize apps
-    /usr/bin/codesign --force --deep --sign - \
-      --identifier "app.zen-browser.zen" \
-      "$out/Applications/${applicationName}.app"
 
     # Use symlink path to avoid installs.ini accumulation on Nix rebuilds
     # The symlink is created by home-manager and remains stable across rebuilds
@@ -197,7 +191,7 @@ in
       alsa-lib
       dbus-glib
       libXtst
-      ffmpeg
+      ffmpeg_7
     ];
 
     runtimeDependencies = lib.optionals stdenv.hostPlatform.isLinux [
@@ -215,9 +209,15 @@ in
     # Firefox uses "relrhack" to manually process relocations from a fixed offset
     patchelfFlags = ["--no-clobber-old-sections"];
 
+    # Stripping invalidates macOS code signatures. We avoid strip-and-re-sign
+    # because /usr/bin/codesign is inaccessible in the Nix sandbox. This also
+    # preserves the original code signing identifier that tools like AdGuard
+    # use (not CFBundleIdentifier) to recognize apps.
+    dontStrip = stdenv.hostPlatform.isDarwin;
+
     preFixup = ''
       gappsWrapperArgs+=(
-        --prefix LD_LIBRARY_PATH : "${lib.makeLibraryPath [ffmpeg]}"
+        --prefix LD_LIBRARY_PATH : "${lib.makeLibraryPath [ffmpeg_7]}"
         --add-flags "--name=''${MOZ_APP_LAUNCHER:-${binaryName}}"
         --add-flags "--class=''${MOZ_APP_LAUNCHER:-${binaryName}}"
       )

@@ -21,9 +21,12 @@ Just add it to your NixOS `flake.nix` or home-manager:
 inputs = {
   zen-browser = {
     url = "github:0xc000022070/zen-browser-flake";
-    # IMPORTANT: we're using "libgbm" and is only available in unstable so ensure
-    # to have it up-to-date or simply don't specify the nixpkgs input
-    inputs.nixpkgs.follows = "nixpkgs";
+    inputs = {
+      # IMPORTANT: we're using "libgbm" and is only available in unstable so ensure
+      # to have it up-to-date or simply don't specify the nixpkgs input
+      nixpkgs.follows = "nixpkgs";
+      home-manager.follows = "home-manager";
+    };
   };
   # ...
 }
@@ -132,12 +135,14 @@ further documentation.
   }
   ```
 
-### Policies
+- `policies` (attrsOf anything):
 
-- `policies` (attrsOf anything): You can also modify the **extensions** and
-  **preferences** from here.
+> [!IMPORTANT]\
+> If you're on macOS you'll need to configure
+> [programs.zen-browser.darwinDefaultsId](https://home-manager-options.extranix.com/?query=programs.firefox.darwinDefaultsId&release=master)
+> first.
 
-#### Some common policies
+### Some common policies
 
 ```nix
 {
@@ -164,74 +169,24 @@ further documentation.
 
 For more policies [read this](https://mozilla.github.io/policy-templates/).
 
-#### Preferences
-
-```nix
-{
-  programs.zen-browser.policies = let
-    mkLockedAttrs = builtins.mapAttrs (_: value: {
-      Value = value;
-      Status = "locked";
-    });
-  in {
-    Preferences = mkLockedAttrs {
-      "browser.tabs.warnOnClose" = false;
-      # and so on...
-    };
-  };
-}
-```
-
 ##### Zen-specific preferences
 
 Check
 [this comment](https://github.com/0xc000022070/zen-browser-flake/issues/59#issuecomment-2964607780).
 
-#### Extensions
+- profiles:
+  - [extensions](#extensions)
+  - [search](#search)
+  - [preferences](#preferences)
+  - [bookmarks](#bookmarks)
+  - [spaces](#spaces)
+  - [pinned tabs](#pinned-tabs-pins)
+  - [userChrome](#userchromecss)
 
-```nix
-{
-  programs.zen-browser.policies = let
-    mkExtensionSettings = builtins.mapAttrs (_: pluginId: {
-      install_url = "https://addons.mozilla.org/firefox/downloads/latest/${pluginId}/latest.xpi";
-      installation_mode = "force_installed";
-    });
-  in {
-    ExtensionSettings = mkExtensionSettings {
-      "wappalyzer@crunchlabz.com" = "wappalyzer";
-      "{85860b32-02a8-431a-b2b1-40fbd64c9c69}" = "github-file-icons";
-    };
-  };
-}
-```
+### Extensions
 
-You can find the `pluginId`s to use in the above snippet by
-1. installing the extensions you want to use as you would normally
-2. use about:debugging#/runtime/this-firefox to find their `Extension ID` 
-
-Or follow the following steps to find their IDs manually:
-
-1. [Go to Add-ons for Firefox](https://addons.mozilla.org/en-US/firefox/).
-2. Go to the page of the extension that you want to declare.
-3. Go to "_See all versions_".
-4. Copy the link from any button to "Download file".
-5. Exec **wget** with the output of this command:
-
-```bash
-echo "<paste-the-link-here>" \
- | sed -E 's|https://addons.mozilla.org/firefox/downloads/file/[0-9]+/([^/]+)-[^/]+\.xpi|\1|' \
- | tr '_' '-' \
- | awk '{print "https://addons.mozilla.org/firefox/downloads/latest/" $1 "/latest.xpi"}'
-```
-
-6. Run `unzip -*.xpi -d my-extension && cd my-extension`.
-7. Run `cat manifest.json | jq -r '.browser_specific_settings.gecko.id'` and use
-   the result for the _entry key_.
-8. Don't forget to add the `install_url` and set `installation_mode` to
-   `force_installed`.
-
-You can also use
-[rycee's firefox-addons](https://nur.nix-community.org/repos/rycee/) like this:
+You can use [rycee's firefox-addons](https://nur.nix-community.org/repos/rycee/)
+like this:
 
 ```nix
 inputs = {
@@ -244,7 +199,7 @@ inputs = {
 
 ```nix
 {
-  programs.zen-browser.profiles.<name>.extensions.packages = 
+  programs.zen-browser.profiles.*.extensions.packages = 
      with inputs.firefox-addons.packages.${pkgs.stdenv.hostPlatform.system}; [
           ublock-origin
           dearrow
@@ -270,6 +225,84 @@ You can search for package names by going to
 > not install.\
 > Doing so through the repo will throw a build error warning you about the
 > package being unfree
+
+### Search
+
+[Search Engine Aliases](https://github.com/nix-community/home-manager/blob/master/modules/programs/firefox/profiles/search.nix#L211)
+
+```nix
+{
+   programs.zen-browser.profiles.*.search = {
+        force = true; # Needed for nix to overwrite search settings on rebuild
+        default = "ddg"; # Aliased to duckduckgo, see other aliases in the link above
+        engines = {
+            # My nixos Option and package search shortcut
+          mynixos = {
+            name = "My NixOS";
+            urls = [
+              {
+                template = "https://mynixos.com/search?q={searchTerms}";
+                params = [
+                  {
+                    name = "query";
+                    value = "searchTerms";
+                  }
+                ];
+              }
+            ];
+
+            icon = "${pkgs.nixos-icons}/share/icons/hicolor/scalable/apps/nix-snowflake.svg";
+            definedAliases = ["@nx"]; # Keep in mind that aliases defined here only work if they start with "@"
+          };
+        };
+      };
+
+}
+```
+
+### Preferences
+
+```nix
+{
+  programs.zen-browser.profiiles.*.settings = {
+    "browser.tabs.warnOnClose" = false;
+    "browser.download.panel.shown" = false;
+    # Since this is a json value, it can be nixified and translated by home-manager;
+    browser = {
+      tabs.warnOnClose = false;
+      download.panel.shown = false;
+    };
+    # Find all settings in about:config
+  };
+}
+```
+
+### Bookmarks
+
+```nix
+{
+   programs.zen-browser.profiles.*.bookmarks = {
+        force = true; # Required for nix to overwrite bookmarks on rebuild
+        settings = [
+          {
+            name = "Nix sites";
+            toolbar = true;
+            bookmarks = [
+              {
+                name = "homepage";
+                url = "https://nixos.org/";
+              }
+              {
+                name = "wiki";
+                tags = ["wiki" "nix"];
+                url = "https://wiki.nixos.org/";
+              }
+            ];
+          }
+        ];
+      };
+}
+```
 
 ### Spaces
 
@@ -366,6 +399,148 @@ You can search for package names by going to
   };
 }
 ```
+
+### Pinned Tabs (pins)
+
+You are also able to declare your pinned tabs! For more info, see
+[this PR](https://github.com/0xc000022070/zen-browser-flake/pull/132)
+
+```nix
+{
+  programs.zen-browser.profiles.default = let
+    containers = {
+      Work = {
+        color = "blue";
+        icon = "briefcase";
+        id = 1;
+      };
+      Life = {
+        color = "green";
+        icon = "tree";
+        id = 2;
+      };
+    };
+    spaces = {
+      "Rendezvous" = {
+        id = "572910e1-4468-4832-a869-0b3a93e2f165";
+        icon = "🎭";
+        position = 1000;
+        container = containers.Life.id;
+      };
+      "Github" = {
+        id = "08be3ada-2398-4e63-bb8e-f8bf9caa8d10";
+        icon = "🐙";
+        position = 2000;
+        theme = {
+          type = "gradient";
+          colors = [
+            {
+              red = 185;
+              green = 200;
+              blue = 215;
+              algorithm = "floating";
+              type = "explicit-lightness";
+            }
+          ];
+          opacity = 0.8;
+          texture = 0.5;
+        };
+      };
+      "Nix" = {
+        id = "2441acc9-79b1-4afb-b582-ee88ce554ec0";
+        icon = "❄️";
+        position = 3000;
+        theme = {
+          type = "gradient";
+          colors = [
+            {
+              red = 150;
+              green = 190;
+              blue = 230;
+              algorithm = "floating";
+              type = "explicit-lightness";
+            }
+          ];
+          opacity = 0.2;
+          texture = 0.5;
+        };
+      };
+    };
+    pins = {
+      "mail" = {
+        id = "9d8a8f91-7e29-4688-ae2e-da4e49d4a179";
+        container = containers.Life.id;
+        url = "https://outlook.live.com/mail/";
+        isEssential = true;
+        position = 101;
+      };
+      "Notion" = {
+        id = "8af62707-0722-4049-9801-bedced343333";
+        container = containers.Life.id;
+        url = "https://notion.com";
+        isEssential = true;
+        position = 102;
+      };
+      "Folo" = {
+        id = "fb316d70-2b5e-4c46-bf42-f4e82d635153";
+        container = containers.Life.id;
+        url = "https://app.folo.is/";
+        isEssential = true;
+        position = 103;
+      };
+      "Nix awesome" = {
+        id = "d85a9026-1458-4db6-b115-346746bcc692";
+        workspace = spaces.Nix.id;
+        isGroup = true;
+        isFolderCollapsed = false;
+        editedTitle = true;
+        position = 200;
+      };
+      "Nix Packages" = {
+        id = "f8dd784e-11d7-430a-8f57-7b05ecdb4c77";
+        workspace = spaces.Nix.id;
+        folderParentId = pins."Nix awesome".id;
+        url = "https://search.nixos.org/packages";
+        position = 201;
+      };
+      "Nix Options" = {
+        id = "92931d60-fd40-4707-9512-a57b1a6a3919";
+        workspace = spaces.Nix.id;
+        folderParentId = pins."Nix awesome".id;
+        url = "https://search.nixos.org/options";
+        position = 202;
+      };
+      "Home Manager Options" = {
+        id = "2eed5614-3896-41a1-9d0a-a3283985359b";
+        workspace = spaces.Nix.id;
+        folderParentId = pins."Nix awesome".id;
+        url = "https://home-manager-options.extranix.com";
+        position = 203;
+      };
+    };
+  in {
+    containersForce = true;
+    pinsForce = true;
+    spacesForce = true;
+    inherit containers pins spaces;
+    # ...
+  };
+}
+```
+
+### userChrome.css
+
+```nix
+{
+  programs.zen-browser.profiles.*.userChrome = ''
+    #navigator-toolbox {
+      background-color: #2b2b2b; /* Changes the toolbar background color */
+    }
+  '';
+}
+```
+
+[Artile on how to costumize userChrome](https://mefmobile.org/how-to-customize-firefoxs-user-interface-with-userchrome-css/)
 
 ## 1Password
 

@@ -1,42 +1,42 @@
 {
   "beta": {
     "x86_64-linux": {
-      "version": "1.17.5b",
-      "sha1": "0d80532bf127cc1c0c890fc853afbd9c02c9b0c9",
-      "url": "https://github.com/zen-browser/desktop/releases/download/1.17.5b/zen.linux-x86_64.tar.xz",
-      "sha256": "sha256-AbRgWf3YZWIdF8gINP93BqC4FmxZP+T6cE2wL5+BkY8="
+      "version": "1.17.15b",
+      "sha1": "53d223b9c5e37e0a2639d3790b1cb50fa5a41491",
+      "url": "https://github.com/zen-browser/desktop/releases/download/1.17.15b/zen.linux-x86_64.tar.xz",
+      "sha256": "sha256-utI3bD6zIAC5oO2wPDCJjPRqeHZj+16EfsCFBslS5oE="
     },
     "aarch64-linux": {
-      "version": "1.17.5b",
-      "sha1": "0d80532bf127cc1c0c890fc853afbd9c02c9b0c9",
-      "url": "https://github.com/zen-browser/desktop/releases/download/1.17.5b/zen.linux-aarch64.tar.xz",
-      "sha256": "sha256-fbX/wkQMA41mnyJx+80MV9xvfloxUmYIvgM0KrWOWCM="
+      "version": "1.17.15b",
+      "sha1": "53d223b9c5e37e0a2639d3790b1cb50fa5a41491",
+      "url": "https://github.com/zen-browser/desktop/releases/download/1.17.15b/zen.linux-aarch64.tar.xz",
+      "sha256": "sha256-O7hi9GlL9cno4+BR00k2BmFX9oSuOSjmfQIJxHqubK0="
     },
     "aarch64-darwin": {
-      "version": "1.17.5b",
-      "sha1": "0d80532bf127cc1c0c890fc853afbd9c02c9b0c9",
-      "url": "https://github.com/zen-browser/desktop/releases/download/1.17.5b/zen.macos-universal.dmg",
-      "sha256": "sha256-ovChi4lJRh3Gh8G/iy3Wkd1iZYzxzkCBfT0Hj/A7LFQ="
+      "version": "1.17.15b",
+      "sha1": "53d223b9c5e37e0a2639d3790b1cb50fa5a41491",
+      "url": "https://github.com/zen-browser/desktop/releases/download/1.17.15b/zen.macos-universal.dmg",
+      "sha256": "sha256-Lv7K5782E2ci5rtRA3SQpkZ+kVdOgYhD2Lc+L+gyFtA="
     }
   },
   "twilight": {
     "x86_64-linux": {
       "version": "1.18t",
       "sha1": "null",
-      "url": "https://github.com/0xc000022070/zen-browser-flake/releases/download/1.18t-1762229385/zen.linux-x86_64.tar.xz",
-      "sha256": "sha256-x+811SHPXK3KvWMbRbhs+NtpGOQ1RhJLdZAQYPWc8p8="
+      "url": "https://github.com/0xc000022070/zen-browser-flake/releases/download/1.18t-1767470976/zen.linux-x86_64.tar.xz",
+      "sha256": "sha256-UEFguGMKOJhGe9HCzMjTBrXLfP/a4ako7feM0j+7RSk="
     },
     "aarch64-linux": {
       "version": "1.18t",
       "sha1": "null",
-      "url": "https://github.com/0xc000022070/zen-browser-flake/releases/download/1.18t-1762229385/zen.linux-aarch64.tar.xz",
-      "sha256": "sha256-g3h3+mF/7PojLzbbMIWalC+zuZaOtbEPIH6CKdJTOEo="
+      "url": "https://github.com/0xc000022070/zen-browser-flake/releases/download/1.18t-1767470976/zen.linux-aarch64.tar.xz",
+      "sha256": "sha256-v5BcqFBIHZy52Y+qYuSda0Dlhdn1+IDN1qtvWiPdzBs="
     },
     "aarch64-darwin": {
       "version": "1.18t",
       "sha1": "null",
-      "url": "https://github.com/0xc000022070/zen-browser-flake/releases/download/1.18t-1762229385/zen.macos-universal.dmg",
-      "sha256": "sha256-CBHFcwMkpWK6RK+s+Fuck9Hfb5cnSXIqDdaXz8TI7Aw="
+      "url": "https://github.com/0xc000022070/zen-browser-flake/releases/download/1.18t-1767470976/zen.macos-universal.dmg",
+      "sha256": "sha256-DI/YHEKmUyxtxCftW7qabrLYG1SUnkM/QJhm4fhevYk="
     }
   },
   "twilight-official": {
@@ -44,22 +44,22 @@
       "version": "1.18t",
       "sha1": "null",
       "url": "https://github.com/zen-browser/desktop/releases/download/twilight/zen.linux-x86_64.tar.xz",
-      "sha256": "sha256-x+811SHPXK3KvWMbRbhs+NtpGOQ1RhJLdZAQYPWc8p8="
+      "sha256": "sha256-UEFguGMKOJhGe9HCzMjTBrXLfP/a4ako7feM0j+7RSk="
     },
     "aarch64-linux": {
       "version": "1.18t",
       "sha1": "null",
       "url": "https://github.com/zen-browser/desktop/releases/download/twilight/zen.linux-aarch64.tar.xz",
-      "sha256": "sha256-g3h3+mF/7PojLzbbMIWalC+zuZaOtbEPIH6CKdJTOEo="
+      "sha256": "sha256-v5BcqFBIHZy52Y+qYuSda0Dlhdn1+IDN1qtvWiPdzBs="
     },
     "aarch64-darwin": {
       "version": "1.18t",
       "sha1": "null",
       "url": "https://github.com/zen-browser/desktop/releases/download/twilight/zen.macos-universal.dmg",
-      "sha256": "sha256-CBHFcwMkpWK6RK+s+Fuck9Hfb5cnSXIqDdaXz8TI7Aw="
+      "sha256": "sha256-DI/YHEKmUyxtxCftW7qabrLYG1SUnkM/QJhm4fhevYk="
     }
   },
   "twilight_metadata": {
-    "updated_at": "2025-11-04T04:09:45Z"
+    "updated_at": "2026-01-03T20:09:36Z"
   }
 }
